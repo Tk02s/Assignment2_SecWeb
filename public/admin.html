@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div class="admin_div">
+        <h1>Admin Dashboard</h1>
+        
+        <div class="admin-stats">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p>1</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Sessions</h3>
+                <p>1</p>
+            </div>
+            <div class="stat-card">
+                <h3>System Status</h3>
+                <p>🟢 Online</p>
+            </div>
+        </div>
+
+        <div class="admin-actions">
+            <button class="action-button primary">Manage Users</button>
+            <button class="action-button primary">System Settings</button>
+            <button class="action-button primary">View Logs</button>
+        </div>
+
+        <div class="admin-actions">
+            <button class="action-button secondary">Backup Database</button>
+            <button class="action-button secondary">Generate Reports</button>
+        </div>
+
+        <form action="/logout">
+            <button type="submit" class="action-button">Log Out</button>
+        </form>
+    </div>
+</body>
+</html>
