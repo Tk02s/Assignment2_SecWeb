@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Admin Dashboard</title>
+    <style>
+        
+    </style>
 </head>
 <body>
     <div class="admin_div">
@@ -26,7 +29,7 @@
         </div>
 
         <div class="admin-actions">
-            <button class="action-button primary">Manage Users</button>
+            <button class="action-button primary" id="manageUsers">Manage Users</button>
             <button class="action-button primary">System Settings</button>
             <button class="action-button primary">View Logs</button>
         </div>
@@ -40,5 +43,94 @@
             <button type="submit" class="action-button">Log Out</button>
         </form>
     </div>
+
+    <div class="fullscreen" id="editProfileModal">
+        <div class="manage profile" >
+            <h1>Manage Users</h1>
+            <div class="user-list" id="userList">
+                <!-- Users will be listed here -->
+            </div>
+            <div class="form-group">
+            </div>
+            <div class="button-group">
+                <button type="button" onclick="deleteButton()" class="save-button">delete user</button>
+                <button type="button" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const modal = document.getElementById('editProfileModal');
+        const cancelBtn = modal.querySelector('.cancel-button');
+        const manageUsers = document.getElementById('manageUsers');
+        const userList = document.getElementById('userList');
+        
+        let element = document.getElementById('element');
+
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            color=true;
+        });
+
+        manageUsers.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            loadUsers();
+        });
+        let username_delet=''
+        function loadUsers() {
+            fetch('http://localhost:2000/getUsers', {
+                credentials: 'include'
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+                return res.json();
+            })
+            .then(data => {
+                userList.innerHTML = ''; // Clear existing list
+                if (data.users && Array.isArray(data.users)) {
+                    data.users.forEach(user => {
+                        const userElement = document.createElement('button');
+                        userElement.className = 'user-item';
+                         // Make sure to use the correct user ID
+                        userElement.textContent =  user.username;
+                        userElement.addEventListener('click',function(){
+                            deleteUser(user,this);
+                        });
+                        userList.appendChild(userElement);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                userList.innerHTML = '<p class="error">Failed to load users</p>';
+            });
+        }
+        let color=true
+        function deleteUser(user,element) {
+            if(color){
+                element.style= 'background:#7c3aed;color:white;';
+                color=false;
+                username_delet=user.username;
+            }
+            
+        }
+
+
+        function deleteButton(){
+            fetch("http://localhost:2000/deleteUser", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username:username_delet }),
+            }).then(res => res.json()).then(data => {
+                if(data.ok){
+                    alert("User deleted successfully");
+                    window.location.reload();
+                }else alert(res.message)
+            })
+        }
+    </script>
 </body>
 </html>

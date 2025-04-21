@@ -103,6 +103,23 @@ app.post('/editEmail',(req,res)=>{
     
 }) 
 
+
+app.get('/getUsers',(req,res)=>{
+    res.json({users})
+})
+
+app.post('/deleteUser',(req,res)=>{
+    const {username}=req.body
+    const index=users.findIndex(user=>user.username===username)
+    if(index!==-1){
+        users.splice(index,1)
+        res.json({message:'user deleted',ok:true})
+    }
+    else{
+        res.status(404).json({message:'user not found'})
+    }
+})
+
 app.listen(2000,()=>{ 
     console.log('the server running on localhost:2000')
     
