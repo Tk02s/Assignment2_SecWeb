@@ -16,7 +16,7 @@
         <div class="admin-stats">
             <div class="stat-card">
                 <h3>Total Users</h3>
-                <p>1</p>
+                <p id="totalUsers"></p>
             </div>
             <div class="stat-card">
                 <h3>Active Sessions</h3>
@@ -75,6 +75,7 @@
             modal.style.display = 'flex';
             loadUsers();
         });
+        let cout_users;
         let username_delet=''
         function loadUsers() {
             fetch('http://localhost:2000/getUsers', {
@@ -87,6 +88,9 @@
                 return res.json();
             })
             .then(data => {
+                cout_users=data.users
+                 document.getElementById('totalUsers').innerHTML=cout_users.length;
+
                 userList.innerHTML = ''; // Clear existing list
                 if (data.users && Array.isArray(data.users)) {
                     data.users.forEach(user => {
@@ -100,12 +104,15 @@
                         userList.appendChild(userElement);
                     });
                 }
+                
             })
             .catch(error => {
                 console.error('Error:', error);
                 userList.innerHTML = '<p class="error">Failed to load users</p>';
             });
         }
+        loadUsers();
+
         let color=true
         function deleteUser(user,element) {
             if(color){
