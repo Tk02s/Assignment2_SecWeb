@@ -5,6 +5,7 @@ const cors=require('cors')
 const session= require('express-session')
 const cookieParser = require('cookie-parser');
 const { errorMessage } = require('./error.js');
+const { log } = require('console')
 app.use(cookieParser());
 
 app.use(express.json())
@@ -12,7 +13,7 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 
-const user=[{username:'user123',password:'1111'}]
+const user=[{username:'user123',password:'1111',email:'amin@gmail.com',roleid:1},]
 
 app.use(session({
     secret:'sec web assignment2',
@@ -33,7 +34,7 @@ app.get('/login',(req,res)=>{
 
 app.get('/admin',(req,res)=>{
     
-   if(req.cookies.isAdmin=='true'&&req.session.user)
+   if(((req.cookies.isAdmin=='true')||(user[0].roleid===2)) &&(req.session.user))
     res.sendFile(path.join(__dirname,'../public/admin.html'))
    else res.status(401).send(errorMessage)
  })
@@ -41,8 +42,15 @@ app.get('/admin',(req,res)=>{
  app.get('/account',(req,res)=>{  
     
     if(req.session.user)
-    res.sendFile(path.join(__dirname,'../public/account.html'))
+    {   
+        res.sendFile(path.join(__dirname,'../public/account.html'));
+    }
     else res.status(401).send(errorMessage)
+    
+    
+})
+app.get('/getEmail',(req,res)=>{
+    res.json({username:req.session.user.username,email:req.session.user.email});
     
     
 })
@@ -51,7 +59,7 @@ app.get('/admin',(req,res)=>{
 app.post('/login',(req,res)=>{
     const {username,password}=req.body
     if(user[0].username==username&&user[0].password==password){
-        req.session.user={username,password}
+        req.session.user={username,password,email:user[0].email}
         if(req.session.user){
            res.cookie('isAdmin',false,{httpOnly:false,path:'/'})
            res.redirect('/account') 
@@ -77,9 +85,18 @@ app.get('/logout',(req,res)=>{
             res.redirect('/')
         } 
     })
-})
+}) 
 
-app.listen(2000,()=>{
+app.post('/editEmail',(req,res)=>{
+    const {email,roleid}=req.body
+    user[0].email=email
+    user[0].roleid=roleid
+    req.session.user.email=email
+    res.redirect('/getEmail')
+    
+}) 
+
+app.listen(2000,()=>{ 
     console.log('the server running on localhost:2000')
     
 })
